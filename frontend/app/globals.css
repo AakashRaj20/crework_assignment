@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+
+@layer components {
+  .main-container {
+    @apply flex text-black min-h-screen flex-col items-center justify-between p-24 bg-gradient-to-b from-[#FFFFFF] to-[#AFA3FF];
+  }
+
+  .form-container {
+    @apply bg-gradient-to-b space-y-[32px] from-[#F7F7F7] to-[#F0F0F0] border border-[#CECECE] rounded-2xl p-[60px] max-w-[648px] w-full;
+  }
+
+  .form-input {
+    @apply px-4 py-3 rounded-lg w-full bg-[#EBEBEB] focus:outline-[#999999];
+  }
+
+  .form-welcome-text {
+    @apply font-semibold text-5xl text-center;
+  }
+
+  .sign-up-btn {
+    @apply bg-gradient-to-t from-[#4B36CC] shadow to-[#9C93D4] w-full p-2 rounded-lg text-white text-xl;
+  }
+
+  .side-nav {
+    @apply bg-white space-y-4 relative text-black pt-6 pb-8 px-4 max-w-[285px] w-full border-r min-h-screen border-[#DEDEDE];
+  }
+
+  .create-task-btn {
+    @apply shadow-lg bg-gradient-to-b from-[#4C38C2] to-[#2F2188] p-2 rounded-lg font-medium text-white flex items-center gap-2 justify-center;
+  }
+
+  .download-btn {
+    @apply bg-[#F3F3F3] absolute bottom-0  text-start !mb-8 rounded-lg p-2 flex items-center gap-2;
+  }
+
+  .features-div {
+    @apply bg-white p-4 rounded-lg border-[#F4F4F4] border flex items-center gap-[10px];
+  }
+
+  .form-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 transition-opacity duration-300 ease-in-out;
+  }
+
+  .sidebar-form-animation {
+    @apply fixed top-0 right-0 h-full max-w-[670px] w-full bg-white shadow-lg transform transition-transform duration-300 ease-in-out z-50;
+  }
+
+  .task-title-input {
+    @apply placeholder:text-[#CCCCCC] placeholder:text-5xl placeholder:font-semibold py-6 focus:outline-none text-5xl font-semibold;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
