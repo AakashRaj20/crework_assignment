@@ -6,9 +6,14 @@ import TaskCreationForm from "./TaskCreationForm";
 
 interface CreateTaskBtnProps {
   className: string;
+  btnText: string;
+  iconSrc: string;
+  width: number;
+  height: number;
+  status?: string;
 }
 
-const CreateTaskBtn = ({ className }: CreateTaskBtnProps) => {
+const CreateTaskBtn = ({ className, btnText, iconSrc, width, height, status }: CreateTaskBtnProps) => {
   const [isFormOpen, setIsFormOpen] = useState(false);
 
   const toggleForm = () => {
@@ -18,14 +23,14 @@ const CreateTaskBtn = ({ className }: CreateTaskBtnProps) => {
   return (
     <div>
       <button
-        className={`create-task-btn flex items-center ${className}`}
+        className={className}
         onClick={toggleForm}
       >
-        Create new task
+       {btnText}
         <Image
-          src="/assets/icons/add.svg"
-          width={24}
-          height={24}
+          src={`/assets/icons/${iconSrc}`}
+          width={width}
+          height={height}
           alt="add task icon"
           className="ml-2"
         />
@@ -45,7 +50,7 @@ const CreateTaskBtn = ({ className }: CreateTaskBtnProps) => {
           isFormOpen ? "translate-x-0" : "translate-x-full"
         }`}
       >
-        <TaskCreationForm onClose={toggleForm} />
+        <TaskCreationForm taskStatus={status} onClose={toggleForm} />
       </div>
     </div>
   );

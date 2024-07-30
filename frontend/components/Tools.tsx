@@ -6,8 +6,12 @@ const Tools = () => {
   return (
     <div className="flex items-center justify-between">
       {/* Search bar */}
-      <div className="flex items-center justify-between bg-white border border-[#E9E9E9] rounded-lg p-2">
-        <input type="text" placeholder="Search" />
+      <div className="flex items-center  justify-between bg-white border border-[#E9E9E9] rounded-lg p-2">
+        <input
+          type="text"
+          placeholder="Search"
+          className="focus:outline-none"
+        />
         <Image
           src="/assets/icons/search.svg"
           width={24}
@@ -19,14 +23,23 @@ const Tools = () => {
       {/* tools opton and create task btn */}
       <div className="flex items-center gap-4">
         {toolOptions.map((tool, index) => (
-          <button key={index} className="flex items-center text-[#797979] gap-[14px]">
+          <button
+            key={index}
+            className="flex items-center text-[#797979] gap-[14px]"
+          >
             {tool.name}
             <Image src={tool.icon} width={24} height={24} alt={tool.name} />
           </button>
         ))}
 
         {/* create task btn */}
-        <CreateTaskBtn className="text-base" />
+        <CreateTaskBtn
+          width={24}
+          height={24}
+          className="text-base create-task-btn flex items-center"
+          btnText="Create Task"
+          iconSrc="add.svg"
+        />
       </div>
     </div>
   );

@@ -29,3 +29,29 @@ export const createTask = asyncHandler(async (req, res) => {
 
   res.status(201).json(new ApiResponse(201, task));
 });
+
+// get all tasks by user
+export const getTasksByUser = asyncHandler(async (req, res) => {
+  const userId = req.user._id;
+
+  const tasks = await Task.find({ owner: userId });
+
+  res.status(200).json(new ApiResponse(200, tasks));
+});
+
+// get task by id
+export const getTaskById = asyncHandler(async (req, res) => {
+  const taskId = req.query.taskId;
+
+  if (!taskId) {
+    throw new ApiError(400, "Task id is required");
+  }
+
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    throw new ApiError(404, "Task not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, task));
+});

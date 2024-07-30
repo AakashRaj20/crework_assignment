@@ -4,12 +4,23 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 
-const options = {
-  httpOnly: true,
-  secure: true,
-  sameSite: "None",
+let options = {
+  maxAge: 1000 * 60 * 60 * 24, // expire after 15 minutes
+  //httpOnly: true, // Cookie will not be exposed to client side code
+  sameSite: "lax", // If client and server origins are different
+  //secure: true, // use with HTTPS only
+  domian: "localhost",
 };
 
+let refreshTokenOptions = {
+  maxAge: 1000 * 60 * 60 * 24 * 7,
+  //httpOnly: true, // Cookie will not be exposed to client side code
+  sameSite: "lax", // If client and server origins are different
+  //secure: true, // use with HTTPS only
+  domian: "localhost",
+};
+
+// generate access and refresh tokens
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -28,6 +39,7 @@ const generateAccessAndRefereshTokens = async (userId) => {
   }
 };
 
+// signup
 const signupUser = asyncHandler(async (req, res) => {
   const { fullname, email, password } = req.body;
   //console.log("email: ", email);
@@ -64,12 +76,20 @@ const signupUser = asyncHandler(async (req, res) => {
     .status(201)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, signedUser, "User registered Successfully"));
+    .json(
+      new ApiResponse(
+        200,
+        signedUser,
+        refreshToken,
+        accessToken,
+        "User registered Successfully"
+      )
+    );
 });
 
+// login
 const loginUser = asyncHandler(async (req, res) => {
   const { email, username, password } = req.body;
-  console.log(email);
 
   if (!username && !email) {
     throw new ApiError(400, "username or email is required");
@@ -95,6 +115,8 @@ const loginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
+  res.cookie("accessToken", accessToken, options);
+
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
@@ -104,6 +126,8 @@ const loginUser = asyncHandler(async (req, res) => {
         200,
         {
           user: loggedInUser,
+          refreshToken,
+          accessToken,
         },
         "User logged In Successfully"
       )
@@ -164,5 +188,18 @@ const refreshAccessToken = async (req, res) => {
     throw new ApiError(401, error?.message || "Invalid refresh token");
   }
 };
+
+// user profile
+export const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user._id).select(
+    "-password -refreshToken"
+  );
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  res.status(200).json(new ApiResponse(200, user));
+});
 
 export { signupUser, loginUser, logoutUser, refreshAccessToken };

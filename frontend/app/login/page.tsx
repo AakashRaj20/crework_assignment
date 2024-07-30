@@ -14,10 +14,12 @@ const Login = () => {
   const onSubmit = async (data: FormData) => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/v1/auth/login",
-        data
+        "http://localhost:3000/api/v1/auth/login",
+        data,
+        {
+          withCredentials: true,
+        }
       );
-      console.log(response.data);
       router.push("/");
     } catch (error) {
       if (error) {

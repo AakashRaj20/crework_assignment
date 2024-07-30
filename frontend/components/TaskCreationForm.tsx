@@ -31,9 +31,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useAppSelector } from "@/redux_store/hooks";
+import { loggedUserDetails } from "@/redux_store/slices/userDetailsSlice";
+import { taskData } from "@/redux_store/slices/getTaskbyIdSlice";
+import { useState } from "react";
 import axios from "axios";
 
-const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
+
+interface TaskCreationFormProps {
+  onClose: () => void;
+  taskStatus?: string;
+}
+
+const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
   const form = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
@@ -45,15 +55,21 @@ const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
     },
   });
 
+  const [status, setStatus] = useState(taskStatus);
+
+  const task = useAppSelector(taskData);
+
   const onSubmit = async (values: z.infer<typeof taskSchema>) => {
     console.log(values);
 
     try {
-      const res = await axios.post("/api/v1/task/createTask", values, {
-        withCredentials: true,
-      });
-
-      console.log(res.data);
+      const res = await axios.post(
+        "http://localhost:5000/api/v1/task/createTask",
+        values,
+        {
+          withCredentials: true,
+        }
+      );
 
       onClose();
     } catch (error) {
@@ -127,6 +143,7 @@ const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
                     <Input
                       className="font-semibold text-5xl placeholder:text-[#CCCCCC] px-0"
                       placeholder="Title"
+                      value={field.value || task?.data.title || ""}
                       {...field}
                     />
                   </FormControl>
@@ -151,7 +168,10 @@ const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
                     <p className="text-[#666666]">Status</p>
                   </FormLabel>
                   <FormControl>
-                    <Select onValueChange={(value) => field.onChange(value)}>
+                    <Select
+                      value={status}
+                      onValueChange={(value) => field.onChange(value)}
+                    >
                       <SelectTrigger className="w-[180px] border-none">
                         <SelectValue
                           className="text-black placeholder:text-[#C1BDBD]"
@@ -167,7 +187,7 @@ const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
                           <SelectItem value="under-review">
                             Under review
                           </SelectItem>
-                          <SelectItem value="finished">Finishes</SelectItem>
+                          <SelectItem value="finished">Finished</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -205,7 +225,7 @@ const TaskCreationForm = ({ onClose }: { onClose: () => void }) => {
                         <SelectGroup className="space-y-2">
                           <SelectItem value="low">Low</SelectItem>
                           <SelectItem value="medium">Medium</SelectItem>
-                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
                         </SelectGroup>
                       </SelectContent>
                     </Select>

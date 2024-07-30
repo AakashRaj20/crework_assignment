@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import { utilsIcons, navlinks } from "@/utils/constants";
+import { useAppSelector } from "@/redux_store/hooks";
+import { loggedUserDetails } from "@/redux_store/slices/userDetailsSlice";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import CreateTaskBtn from "./CreateTaskBtn";
@@ -10,6 +12,8 @@ const Sidebar = () => {
   const [activeBtn, setActiveBtn] = useState("home");
 
   const pathname = usePathname();
+
+  const userDetails = useAppSelector(loggedUserDetails);
 
   const handleActiveBtn = (btnName) => {
     setActiveBtn(btnName);
@@ -26,7 +30,7 @@ const Sidebar = () => {
             width={31}
             alt="user_profile"
           />
-          <p className="font-medium text-xl">Joe Gardner</p>
+          <p className="font-medium text-xl">{userDetails?.data.fullname}</p>
         </div>
 
         {/* notifiaction, theme, logout button  */}
@@ -67,7 +71,13 @@ const Sidebar = () => {
       </div>
 
       {/* create task btn */}
-      <CreateTaskBtn className="w-full text-xl" />
+      <CreateTaskBtn
+        className="w-full text-xl create-task-btn flex items-center"
+        btnText="Create Task"
+        iconSrc="add.svg"
+        width={24}
+        height={24}
+      />
 
       {/* download app */}
       <button className="download-btn">
