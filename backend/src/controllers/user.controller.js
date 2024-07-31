@@ -7,34 +7,33 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-if(process.env.ENV === "dev"){
+if (process.env.ENV === "dev") {
   var options = {
-    maxAge: 1000 * 60 * 60 * 24, 
-    sameSite: "lax", 
-    secure: true, 
+    maxAge: 1000 * 60 * 60 * 24,
+    sameSite: "none",
+    secure: true,
     httpOnly: true,
   };
-}else {
+} else {
   var options = {
-    maxAge: 1000 * 60 * 60 * 24, 
-    sameSite: "lax", 
+    maxAge: 1000 * 60 * 60 * 24,
+    sameSite: "none",
   };
 }
 
 if (process.env.ENV === "dev") {
   var refreshTokenOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: "lax",
+    sameSite: "none",
   };
 } else {
   var refreshTokenOptions = {
     maxAge: 1000 * 60 * 60 * 24 * 7,
-    sameSite: "lax",
+    sameSite: "none",
     secure: true,
     httpOnly: true,
   };
 }
-
 
 // generate access and refresh tokens
 const generateAccessAndRefereshTokens = async (userId) => {
