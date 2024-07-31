@@ -167,12 +167,12 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
                   </FormLabel>
                   <FormControl>
                     <Select
-                      value={status}
+                      value={status?.toString()}
                       onValueChange={(value) => field.onChange(value)}
                     >
                       <SelectTrigger className="w-[180px] border-none">
                         <SelectValue
-                          className="text-black placeholder:text-[#C1BDBD]"
+                          className="placeholder:text-[#C1BDBD]"
                           placeholder="Not Selected"
                         />
                       </SelectTrigger>

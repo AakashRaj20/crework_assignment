@@ -9,6 +9,12 @@ import {
   differenceInHours,
   differenceInMinutes,
 } from "date-fns";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import UpdateTaskForm from "./UpdateTaskForm";
 import { useAppDispatch } from "@/redux_store/hooks";
 import { getTaskById } from "@/redux_store/slices/getTaskbyIdSlice";
@@ -142,28 +148,53 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, index, isDragging }) => {
               {getTimeDifference(task.updatedAt)}
             </p>
             <div className="space-x-5">
-              <button
-                onMouseUp={() => handleMouseUp(toggleForm)}
-                onTouchEnd={() => handleMouseUp(toggleForm)}
-              >
-                <Image
-                  src="/assets/icons/description.svg"
-                  height={24}
-                  width={24}
-                  alt="edit icon"
-                />
-              </button>
-              <button
-                onMouseUp={() => handleMouseUp(() => removeTask(task._id))}
-                onTouchEnd={() => handleMouseUp(() => removeTask(task._id))}
-              >
-                <Image
-                  src="/assets/icons/delete.svg"
-                  height={24}
-                  width={24}
-                  alt="delete icon"
-                />
-              </button>
+              {/* edit button */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onMouseUp={() => handleMouseUp(toggleForm)}
+                      onTouchEnd={() => handleMouseUp(toggleForm)}
+                    >
+                      <Image
+                        src="/assets/icons/description.svg"
+                        height={24}
+                        width={24}
+                        alt="edit icon"
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="absolute right-0 top-[2rem] bg-white">
+                    <p>Edit</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+
+              {/* delete button */}
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      onMouseUp={() =>
+                        handleMouseUp(() => removeTask(task._id))
+                      }
+                      onTouchEnd={() =>
+                        handleMouseUp(() => removeTask(task._id))
+                      }
+                    >
+                      <Image
+                        src="/assets/icons/delete.svg"
+                        height={24}
+                        width={24}
+                        alt="delete icon"
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-white text-red-500 absolute right-0 top-[2rem]">
+                    <p>Delete</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
