@@ -7,7 +7,7 @@
 
 ## Project Overview
 
-This project is a web-based task management application similar to Trello. It allows users to create, manage, and organize tasks in a personalized task board with drag-and-drop functionality. The application is built using modern web technologies to ensure a seamless and secure experience.
+This project is a task managenment assignment by Crework for fullstack developer position. I have tried my best to have a clean code with precise comments as welll as adhereing to best coding practices also following proper file structure Model View Controlller for backend and at Frontend making components as resulabel and code as modular as possible. I learned a lot through this project as well thank you.
 
 ## Features
 
