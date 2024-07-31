@@ -32,23 +32,31 @@ const initialState: TaskDetailState = {
   error: null,
 };
 
-export const getTaskById = createAsyncThunk("getTaskById", async (taskId: string) => {
+export const getTaskById = createAsyncThunk(
+  "getTaskById",
+  async (taskId: string) => {
     try {
-        const res = await axios.get(`http://localhost:3000/api/v1/task/getTaskById?taskId=${taskId}`, {
-        withCredentials: true,
-        });
-        console.log(res.data);
-        
-        return res.data;
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/task/getTaskById?taskId=${taskId}`,
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(res.data);
+
+      return res.data;
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-});
+  }
+);
 
 export const getTaskByIdSlice = createSlice({
   name: "getTaskById",
   initialState: initialState,
-  reducers: {},
+  reducers: {
+   
+  },
   extraReducers: (builder) => {
     builder.addCase(getTaskById.pending, (state) => {
       state.loading = true;
@@ -67,5 +75,8 @@ export const getTaskByIdSlice = createSlice({
   },
 });
 
+
 export default getTaskByIdSlice.reducer;
 export const taskData = (state: RootState) => state.getTaskById;
+
+

@@ -30,9 +30,12 @@ const initialState: UserDetailState = {
 
 export const getUserDetails = createAsyncThunk("getUserDetails", async () => {
   try {
-    const res = await axios.get("http://localhost:3000/api/v1/auth/profile", {
-      withCredentials: true,
-    });
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/profile`,
+      {
+        withCredentials: true,
+      }
+    );
     return res.data;
   } catch (error) {
     console.log(error);

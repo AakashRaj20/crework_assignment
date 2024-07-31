@@ -1,34 +1,44 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { FormData, signInSchema } from "@/utils/types";
-import FormField from "@/components/FormFields";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema } from "@/utils/types";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
 import Link from "next/link";
 import axios from "axios";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const onSubmit = async (data: FormData) => {
-    console.log("SUCCESS", data);
+  const signUpform = useForm<z.infer<typeof signInSchema>>({
+    resolver: zodResolver(signInSchema),
+    defaultValues: {
+      fullname: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const router = useRouter();
+
+  const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/v1/auth/signup",
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/signup`,
         data
       );
-      console.log(res.data);
+      router.push("/");
     } catch (error) {
       console.error(error);
     }
   };
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<FormData>({
-    resolver: zodResolver(signInSchema),
-  });
 
   return (
     <main className="main-container">
@@ -36,33 +46,76 @@ export default function Home() {
         <h5 className="form-welcome-text">
           Welcome to <span className="text-[#4534AC]">Workflo!</span>
         </h5>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            name="fullname"
-            type="text"
-            placeholder="Full Name"
-            register={register}
-            error={errors.fullname}
-          />
-          <FormField
-            name="email"
-            type="email"
-            placeholder="Your Email"
-            register={register}
-            error={errors.email}
-          />
-          <FormField
-            name="password"
-            type="password"
-            placeholder="Password"
-            register={register}
-            error={errors.password}
-          />
+        <div>
+          <Form {...signUpform}>
+            {/* task form */}
 
-          <button type="submit" className="sign-up-btn">
-            Sign Up
-          </button>
-        </form>
+            <form onSubmit={signUpform.handleSubmit(onSubmit)}>
+              {/* task form fields */}
+              <div className="space-y-6">
+                {/* fullname */}
+                <FormField
+                  control={signUpform.control}
+                  name="fullname"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          className="form-input"
+                          placeholder="Fullname"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* email */}
+                <FormField
+                  control={signUpform.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="email"
+                          className="form-input"
+                          placeholder="Your Email"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                {/* passsword */}
+                <FormField
+                  control={signUpform.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          className="form-input"
+                          placeholder="Password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-500" />
+                    </FormItem>
+                  )}
+                />
+
+                <button className="sign-up-btn" type="submit">
+                  Sign In
+                </button>
+              </div>
+            </form>
+          </Form>
+        </div>
 
         <h6 className="text-xl text-[#606060] text-center">
           Already have an account?{" "}

@@ -5,18 +5,34 @@ import { utilsIcons, navlinks } from "@/utils/constants";
 import { useAppSelector } from "@/redux_store/hooks";
 import { loggedUserDetails } from "@/redux_store/slices/userDetailsSlice";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CreateTaskBtn from "./CreateTaskBtn";
+import axios from "axios";
 
 const Sidebar = () => {
   const [activeBtn, setActiveBtn] = useState("home");
 
   const pathname = usePathname();
+  const router = useRouter();
 
   const userDetails = useAppSelector(loggedUserDetails);
 
   const handleActiveBtn = (btnName) => {
     setActiveBtn(btnName);
+  };
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/auth/logout`,
+        {
+          withCredentials: true,
+        }
+      );
+      await router.push("/login");
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -48,7 +64,10 @@ const Sidebar = () => {
               </button>
             ))}
           </div>
-          <button className="text-[#797979] rounded p-2 bg-[#F4F4F4]">
+          <button
+            onClick={handleLogout}
+            className="text-[#797979] rounded p-2 bg-[#F4F4F4]"
+          >
             Logout
           </button>
         </div>

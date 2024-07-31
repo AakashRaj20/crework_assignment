@@ -6,7 +6,7 @@ export const getTaskByUser = createAsyncThunk(
   async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3000/api/v1/task/getTaskByUser",
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/task/getTaskByUser`,
         {
           withCredentials: true,
         }

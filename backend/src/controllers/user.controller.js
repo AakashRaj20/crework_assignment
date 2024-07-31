@@ -3,22 +3,38 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
 
-let options = {
-  maxAge: 1000 * 60 * 60 * 24, // expire after 15 minutes
-  //httpOnly: true, // Cookie will not be exposed to client side code
-  sameSite: "lax", // If client and server origins are different
-  //secure: true, // use with HTTPS only
-  domian: "localhost",
-};
+dotenv.config();
 
-let refreshTokenOptions = {
-  maxAge: 1000 * 60 * 60 * 24 * 7,
-  //httpOnly: true, // Cookie will not be exposed to client side code
-  sameSite: "lax", // If client and server origins are different
-  //secure: true, // use with HTTPS only
-  domian: "localhost",
-};
+if(process.env.ENV === "dev"){
+  var options = {
+    maxAge: 1000 * 60 * 60 * 24, 
+    sameSite: "lax", 
+    secure: true, 
+    httpOnly: true,
+  };
+}else {
+  var options = {
+    maxAge: 1000 * 60 * 60 * 24, 
+    sameSite: "lax", 
+  };
+}
+
+if (process.env.ENV === "dev") {
+  var refreshTokenOptions = {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: "lax",
+  };
+} else {
+  var refreshTokenOptions = {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+    sameSite: "lax",
+    secure: true,
+    httpOnly: true,
+  };
+}
+
 
 // generate access and refresh tokens
 const generateAccessAndRefereshTokens = async (userId) => {
@@ -75,7 +91,7 @@ const signupUser = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("refreshToken", refreshToken, refreshTokenOptions)
     .json(
       new ApiResponse(
         200,
@@ -120,7 +136,7 @@ const loginUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    .cookie("refreshToken", refreshToken, refreshTokenOptions)
     .json(
       new ApiResponse(
         200,
@@ -147,7 +163,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .clearCookie("accessToken", options)
-    .clearCookie("refreshToken", options)
+    .clearCookie("refreshToken", refreshTokenOptions)
     .json(new ApiResponse(200, {}, "user logged out successfully"));
 });
 
@@ -182,7 +198,7 @@ const refreshAccessToken = async (req, res) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", newRefreshToken, options)
+      .cookie("refreshToken", newRefreshToken, refreshTokenOptions)
       .json(new ApiResponse(200, {}, "Access token refreshed successfully"));
   } catch (error) {
     throw new ApiError(401, error?.message || "Invalid refresh token");

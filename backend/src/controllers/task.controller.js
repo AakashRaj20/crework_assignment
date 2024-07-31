@@ -55,3 +55,59 @@ export const getTaskById = asyncHandler(async (req, res) => {
 
   res.status(200).json(new ApiResponse(200, task));
 });
+
+// update task by id
+export const updateTaskById = asyncHandler(async (req, res) => {
+  const taskId = req.query.taskId;
+  const userId = req.user._id;
+
+  if (!taskId) {
+    throw new ApiError(400, "Task id is required");
+  }
+
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    throw new ApiError(404, "Task not found");
+  }
+
+  if (task.owner.toString() !== userId.toString()) {
+    throw new ApiError(403, "You are not authorized to update this task");
+  }
+
+  const { title, status, priority, deadline, description } = req.body;
+
+  task.title = title || task.title;
+  task.status = status || task.status;
+  task.priority = priority || task.priority;
+  task.deadline = deadline || task.deadline;
+  task.description = description || task.description;
+
+  await task.save();
+
+  res.status(200).json(new ApiResponse(200, task));
+});
+
+// delete task by id
+export const deleteTaskById = asyncHandler(async (req, res) => {
+  const taskId = req.query.taskId;
+  const userId = req.user._id;
+
+  if (!taskId) {
+    throw new ApiError(400, "Task id is required");
+  }
+
+  const task = await Task.findById(taskId);
+
+  if (!task) {
+    throw new ApiError(404, "Task not found");
+  }
+
+  if (task.owner.toString() !== userId.toString()) {
+    throw new ApiError(403, "You are not authorized to delete this task");
+  }
+
+  await task.deleteOne();
+
+  res.status(200).json(new ApiResponse(200, "Task deleted successfully"));
+});

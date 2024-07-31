@@ -31,18 +31,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import axios from "axios";
-import { useAppDispatch } from "@/redux_store/hooks";
+import { useAppSelector, useAppDispatch } from "@/redux_store/hooks";
 import { getTaskByUser } from "@/redux_store/slices/getTaskByUserSlice";
+import { taskData } from "@/redux_store/slices/getTaskbyIdSlice";
+import { useEffect } from "react";
+import axios from "axios";
 
-interface TaskCreationFormProps {
+interface UpdateTaskFormProps {
   onClose: () => void;
-  taskStatus?: string;
 }
 
-const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
-  const createform = useForm<z.infer<typeof taskSchema>>({
+const UpdateTaskForm = ({ onClose }: UpdateTaskFormProps) => {
+  const task = useAppSelector(taskData);
+
+  const dispatch = useAppDispatch();
+
+  const updateform = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       title: "",
@@ -53,23 +57,30 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
     },
   });
 
-  const [status, setStatus] = useState(taskStatus);
-
-  const dispatch = useAppDispatch();
-
+  useEffect(() => {
+    if (task.data) {
+      updateform.reset({
+        title: task.data.title,
+        status: task.data.status,
+        description: task.data.description || "",
+        deadline: task.data.deadline ? new Date(task.data.deadline) : undefined,
+        priority: task.data.priority,
+      });
+    }
+  }, [task.data, updateform]);
 
   const onSubmit = async (values: z.infer<typeof taskSchema>) => {
     console.log(values);
 
     try {
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/v1/task/createTask`,
+      const res = await axios.patch(
+        `${process.env.NEXT_PUBLIC_API_URL}/v1/task/updateTask?taskId=${task?.data._id}`,
         values,
         {
           withCredentials: true,
         }
       );
-      dispatch(getTaskByUser())
+      dispatch(getTaskByUser());
       onClose();
     } catch (error) {
       console.error(error);
@@ -77,12 +88,12 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
   };
 
   return (
-    <div className="py-4 px-6 bg-white w-[670px]">
+    <div className="py-4 px-6 bg-white w-[670px] overflow-y-hidden">
       {/* form */}
-      <Form {...createform}>
+      <Form {...updateform}>
         {/* task form */}
 
-        <form onSubmit={createform.handleSubmit(onSubmit)}>
+        <form onSubmit={updateform.handleSubmit(onSubmit)}>
           <nav className="flex items-center justify-between mb-[27px]">
             {/* close and expand btn */}
             <div className="flex items-center gap-4">
@@ -116,7 +127,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
                 />
               </button>
               <button className="create-task-btn" type="submit">
-                Create Task
+                Update Task
               </button>
               <button className="bg-[#F4F4F4] p-2 rounded text-[#797979] flex items-center gap-[14px]">
                 Favorite
@@ -134,7 +145,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
           <div className="space-y-8">
             {/* input title */}
             <FormField
-              control={createform.control}
+              control={updateform.control}
               name="title"
               render={({ field }) => (
                 <FormItem>
@@ -152,7 +163,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
 
             {/* status */}
             <FormField
-              control={createform.control}
+              control={updateform.control}
               name="status"
               render={({ field }) => (
                 <FormItem className="flex items-center gap-[60px]">
@@ -166,10 +177,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
                     <p className="text-[#666666]">Status</p>
                   </FormLabel>
                   <FormControl>
-                    <Select
-                      value={status}
-                      onValueChange={(value) => field.onChange(value)}
-                    >
+                    <Select defaultValue={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className="w-[180px] border-none">
                         <SelectValue
                           className="text-black placeholder:text-[#C1BDBD]"
@@ -197,7 +205,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
 
             {/* priority */}
             <FormField
-              control={createform.control}
+              control={updateform.control}
               name="priority"
               render={({ field }) => (
                 <FormItem className="flex items-center gap-[60px]">
@@ -234,7 +242,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
 
             {/* deadline */}
             <FormField
-              control={createform.control}
+              control={updateform.control}
               name="deadline"
               render={({ field }) => (
                 <FormItem className="flex items-center gap-[60px]">
@@ -286,7 +294,7 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
 
             {/* description */}
             <FormField
-              control={createform.control}
+              control={updateform.control}
               name="description"
               render={({ field }) => (
                 <FormItem className="flex  gap-[120px]">
@@ -334,4 +342,4 @@ const TaskCreationForm = ({ onClose, taskStatus }: TaskCreationFormProps) => {
   );
 };
 
-export default TaskCreationForm;
+export default UpdateTaskForm;

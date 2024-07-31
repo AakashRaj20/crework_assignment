@@ -26,7 +26,7 @@
   }
 
   .form-input {
-    @apply px-4 py-3 rounded-lg w-full bg-[#EBEBEB] focus:outline-[#999999];
+    @apply !px-4 !py-3 rounded-lg w-full !bg-[#EBEBEB] focus:outline-[#999999];
   }
 
   .form-welcome-text {
